@@ -15,11 +15,12 @@ import curses
 import curses.ascii
 from contextlib import contextmanager
 
-import six
+import praw
+import prawcore
 import requests
+import six
 
 from . import exceptions
-from .packages import praw
 
 
 _logger = logging.getLogger(__name__)
@@ -166,12 +167,11 @@ class LoadScreen(object):
 
     EXCEPTION_MESSAGES = [
         (exceptions.TUIRError, '{0}'),
-        (praw.errors.OAuthException, 'OAuth Error'),
-        (praw.errors.OAuthScopeRequired, 'Not logged in'),
-        (praw.errors.LoginRequired, 'Not logged in'),
-        (praw.errors.InvalidCaptcha, 'Error, captcha required'),
-        (praw.errors.InvalidSubreddit, '{0.args[0]}'),
-        (praw.errors.PRAWException, '{0.__class__.__name__}'),
+        (prawcore.exceptions.OAuthException, 'OAuth Error'),
+        # A few exceptions don't exist in PRAW 6
+        #(praw.errors.InvalidCaptcha, 'Error, captcha required'),
+        #(praw.errors.InvalidSubreddit, '{0.args[0]}'),
+        #(praw.errors.PRAWException, '{0.__class__.__name__}'),
         (requests.exceptions.Timeout, 'HTTP request timed out'),
         (requests.exceptions.RequestException, '{0.__class__.__name__}'),
     ]
