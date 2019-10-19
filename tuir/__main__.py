@@ -10,8 +10,9 @@ import locale
 import logging
 import warnings
 
-import six
+import praw
 import requests
+import six
 
 # Need to check for curses compatibility before performing the tuir imports
 try:
@@ -33,8 +34,6 @@ if TUIR_BROWSER:
     os.environ['BROWSER'] = TUIR_BROWSER
 
 from . import docs
-from . import packages
-from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
 from .theme import Theme
 from .oauth import OAuthHelper
