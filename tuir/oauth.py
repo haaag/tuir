@@ -9,6 +9,8 @@ import codecs
 import logging
 import threading
 
+from prawcore.exceptions import OAuthException, ResponseException
+
 # pylint: disable=import-error
 from six.moves.urllib.parse import urlparse, parse_qs
 from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -16,7 +18,6 @@ from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from . import docs
 from .config import Config
 from .exceptions import InvalidRefreshToken
-from .packages.praw.errors import HTTPException, OAuthException
 
 _logger = logging.getLogger(__name__)
 
@@ -147,11 +148,11 @@ class OAuthHelper(object):
                 try:
                     self.reddit.refresh_access_information(
                         self.config.refresh_token)
-                except (HTTPException, OAuthException) as e:
+                except (ResponseException, OAuthException) as e:
                     # Reddit didn't accept the refresh-token
                     # This appears to throw a generic 400 error instead of the
                     # more specific invalid_token message that it used to send
-                    if isinstance(e, HTTPException):
+                    if isinstance(e, ResponseException):
                         if e._raw.status_code != 400:
                             # No special handling if the error is something
                             # temporary like a 5XX.
