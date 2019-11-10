@@ -26,6 +26,10 @@ class SubredditError(TUIRError):
     "Subreddit could not be loaded"
 
 
+class InvalidSubredditError(TUIRError):
+    "Invalid subreddit name"
+
+
 class NoSubmissionsError(TUIRError):
     "No submissions for the given page"
 

@@ -7,14 +7,13 @@ import logging
 from datetime import datetime
 from timeit import default_timer as timer
 
+import praw
 import six
 from bs4 import BeautifulSoup
 from kitchen.text.display import wrap
 
 from . import exceptions
 from .config import Config
-from .packages import praw
-from .packages.praw.errors import InvalidSubreddit
 from .packages.praw.helpers import normalize_url
 from .packages.praw.handlers import DefaultHandler
 
@@ -690,12 +689,12 @@ class SubredditContent(Content):
             #    resource_order = "top"
             resource, resource_order = parts
         else:
-            raise InvalidSubreddit('`{}` is an invalid format'.format(name))
+            raise exceptions.InvalidSubredditError('`{}` is an invalid format'.format(name))
 
         if not resource:
             # Praw does not correctly handle empty strings
             # https://github.com/praw-dev/praw/issues/615
-            raise InvalidSubreddit('Subreddit cannot be empty')
+            raise exceptions.InvalidSubredditError('Subreddit cannot be empty')
 
         # If the order was explicitly passed in, it will take priority over
         # the order that was extracted from the name
