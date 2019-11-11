@@ -14,7 +14,6 @@ from kitchen.text.display import wrap
 
 from . import exceptions
 from .config import Config
-from .packages.praw.helpers import normalize_url
 from .packages.praw.handlers import DefaultHandler
 
 _logger = logging.getLogger(__name__)
@@ -1131,6 +1130,17 @@ class RequestHeaderRateLimiter(DefaultHandler):
         else:
             self.next_request_timestamp = None
 
+    # This method doesn't exist in praw6, this method copied from
+    # https://github.com/michael-lazar/praw3/blob/master/praw/helpers.py#L448
+    @staticmethod
+    def _normalize_url(url):
+        """Return url after stripping trailing .json and trailing slashes."""
+        if url.endswith('.json'):
+            url = url[:-5]
+        if url.endswith('/'):
+            url = url[:-1]
+        return url
+
     def _clear_timeouts(self, cache_timeout):
         """
         Clear the cache of timed out results.
@@ -1153,7 +1163,7 @@ class RequestHeaderRateLimiter(DefaultHandler):
         """
         if isinstance(urls, six.text_type):
             urls = [urls]
-        urls = set(normalize_url(url) for url in urls)
+        urls = set(self._normalize_url(url) for url in urls)
         retval = 0
         for key in list(self.cache):
             if key[0] in urls:
