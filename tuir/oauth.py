@@ -128,11 +128,6 @@ class OAuthHelper(object):
         # unless we know that the server needs to be used.
         self.server = None
 
-        self.reddit.set_oauth_app_info(
-            self.config['oauth_client_id'],
-            self.config['oauth_client_secret'],
-            self.config['oauth_redirect_uri'])
-
         # Reddit's mobile website works better on terminal browsers
         if not self.term.display:
             if '.compact' not in self.reddit.config.API_PATHS['authorize']:

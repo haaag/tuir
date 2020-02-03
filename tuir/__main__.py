@@ -205,7 +205,10 @@ def main():
             term.set_theme(theme)
 
             with term.loader('Initializing', catch_exception=False):
-                reddit = praw.Reddit(user_agent=user_agent,
+                reddit = praw.Reddit(client_id=config['oauth_client_id'],
+                                     client_secret=config['oauth_client_secret'],
+                                     redirect_uri=config['oauth_redirect_uri'],
+                                     user_agent=user_agent,
                                      decode_html_entities=False,
                                      disable_update_check=True,
                                      timeout=10)  # 10 second request timeout
