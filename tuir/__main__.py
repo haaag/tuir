@@ -280,9 +280,6 @@ def main():
     finally:
         # Try to save the browsing history
         config.save_history()
-        # Ensure sockets are closed to prevent a ResourceWarning
-        if 'reddit' in locals():
-            reddit.handler.http.close()
 
 
 sys.exit(main())
