@@ -38,7 +38,6 @@ from .config import Config, copy_default_config, copy_default_mailcap
 from .theme import Theme
 from .oauth import OAuthHelper
 from .terminal import Terminal
-from .content import RequestHeaderRateLimiter
 from .objects import curses_session, patch_webbrowser
 from .subreddit_page import SubredditPage
 from .submission_page import SubmissionPage
@@ -145,10 +144,7 @@ def main():
         warnings.warn(text)
         config['ascii'] = True
 
-    if packages.__praw_bundled__:
-        praw_info = 'packaged, commit {}'.format(packages.__praw_hash__[:12])
-    else:
-        praw_info = 'system installed v{}'.format(praw.__version__)
+    praw_info = 'system installed v{}'.format(praw.__version__)
 
     # Update the webbrowser module's default behavior
     patch_webbrowser()
@@ -212,8 +208,7 @@ def main():
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
                                      disable_update_check=True,
-                                     timeout=10,  # 10 second request timeout
-                                     handler=RequestHeaderRateLimiter())
+                                     timeout=10)  # 10 second request timeout
 
             # Dial the request cache up from 30 seconds to 5 minutes
             # I'm trying this out to make navigation back and forth
