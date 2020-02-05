@@ -141,8 +141,7 @@ class OAuthHelper(object):
         if self.config.refresh_token:
             with self.term.loader('Logging in'):
                 try:
-                    self.reddit.refresh_access_information(
-                        self.config.refresh_token)
+                    self.reddit.auth.authorize(self.config.refresh_token)
                 except (ResponseException, OAuthException) as e:
                     # Reddit didn't accept the refresh-token
                     # This appears to throw a generic 400 error instead of the
@@ -155,7 +154,8 @@ class OAuthHelper(object):
 
                     # Otherwise we know the token is bad, so we can remove it.
                     _logger.exception(e)
-                    self.clear_oauth_data()
+                    self.config.delete_refresh_token()
+
                     raise InvalidRefreshToken(
                         '       Invalid user credentials!\n'
                         'The cached refresh token has been removed')
@@ -239,6 +239,3 @@ class OAuthHelper(object):
         if self.config['persistent']:
             self.config.save_refresh_token()
 
-    def clear_oauth_data(self):
-        self.reddit.clear_authentication()
-        self.config.delete_refresh_token()
