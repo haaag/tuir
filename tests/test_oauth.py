@@ -5,7 +5,6 @@ import requests
 
 from tuir.oauth import OAuthHelper, OAuthHandler
 from tuir.exceptions import InvalidRefreshToken
-from tuir.packages.praw.errors import OAuthException
 
 
 try:

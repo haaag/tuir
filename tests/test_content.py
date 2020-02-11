@@ -6,13 +6,12 @@ from itertools import islice
 from collections import OrderedDict
 
 import six
+import praw
 import pytest
 
 from tuir import config, exceptions
-from tuir.packages import praw
 from tuir.content import (
-    Content, SubmissionContent, SubredditContent, SubscriptionContent,
-    RequestHeaderRateLimiter)
+    Content, SubmissionContent, SubredditContent, SubscriptionContent)
 
 try:
     from unittest import mock

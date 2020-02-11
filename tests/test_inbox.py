@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import praw
 import pytest
-from tuir.packages.praw.errors import InvalidUser
 
 from tuir import exceptions
 from tuir.docs import FOOTER_INBOX

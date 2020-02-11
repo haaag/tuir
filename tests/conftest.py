@@ -7,14 +7,13 @@ import logging
 import threading
 from functools import partial
 
+import praw
 import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
 
 from tuir.oauth import OAuthHelper, OAuthHandler, OAuthHTTPServer
-from tuir.content import RequestHeaderRateLimiter
 from tuir.config import Config
-from tuir.packages import praw
 from tuir.terminal import Terminal
 from tuir.subreddit_page import SubredditPage
 from tuir.submission_page import SubmissionPage
@@ -175,7 +174,7 @@ def stdscr():
 
 
 @pytest.yield_fixture()
-def reddit(vcr, request):
+def reddit(vcr, request, config):
     cassette_name = '%s.yaml' % request.node.name
     # Clear the cassette before running the test
     if request.config.option.record_mode == 'once':
@@ -184,12 +183,13 @@ def reddit(vcr, request):
             os.remove(filename)
 
     with vcr.use_cassette(cassette_name):
-        with patch('tuir.packages.praw.Reddit.get_access_information'):
-            handler = RequestHeaderRateLimiter()
-            reddit = praw.Reddit(user_agent='tuir test suite',
+        with patch('praw.Reddit.get_access_information'):
+            reddit = praw.Reddit(client_id=config['oauth_client_id'],
+                                 client_secret=config['oauth_client_secret'],
+                                 redirect_uri=config['oauth_redirect_uri'],
+                                 user_agent='tuir test suite',
                                  decode_html_entities=False,
-                                 disable_update_check=True,
-                                 handler=handler)
+                                 disable_update_check=True)
             # praw uses a global cache for requests, so we need to clear it
             # before each unit test. Otherwise we may fail to generate new
             # cassettes.

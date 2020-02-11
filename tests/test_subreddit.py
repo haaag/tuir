@@ -6,11 +6,11 @@ from collections import OrderedDict
 import sys
 
 import six
+import praw
 import pytest
 
 from tuir import __version__
 from tuir.subreddit_page import SubredditPage
-from tuir.packages.praw.errors import NotFound, HTTPException
 from requests.exceptions import ReadTimeout
 
 try:
