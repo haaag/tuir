@@ -8,6 +8,7 @@ import threading
 from functools import partial
 
 import praw
+import prawcore
 import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
@@ -183,20 +184,20 @@ def reddit(vcr, request, config):
             os.remove(filename)
 
     with vcr.use_cassette(cassette_name):
-        with patch('praw.Reddit.get_access_information'):
+        with patch('prawcore.Authorizer'):
+            # Make praw not check for updates
+            os.environ['praw_check_for_updates'] = "False"
             reddit = praw.Reddit(client_id=config['oauth_client_id'],
                                  client_secret=config['oauth_client_secret'],
                                  redirect_uri=config['oauth_redirect_uri'],
                                  user_agent='tuir test suite',
                                  decode_html_entities=False,
                                  disable_update_check=True)
+            # TODO - is the following necessary with PRAW version >3.6?
             # praw uses a global cache for requests, so we need to clear it
             # before each unit test. Otherwise we may fail to generate new
             # cassettes.
-            reddit.handler.clear_cache()
-            if request.config.option.record_mode == 'none':
-                # Turn off praw rate limiting when using cassettes
-                reddit.config.api_request_delay = 0
+            # reddit.handler.clear_cache()
             yield reddit
 
 

@@ -2,43 +2,86 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.11.0]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
     method: GET
     uri: https://v.redd.it/zv89llsvexdz/DASHPlaylist.mpd
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA+WWXW+bMBSG7/srLN8TbKAUUEiVNp0WbdWikGyXkYsNWAKD+Mja/fodIJFImq5L
-        lV0tN0ns4/PxPuYcxrfPWYq2oqxkrnxMRwQjocKcSxX7eL36pDkYVTVTnKW5Ej5+ERW+nVyNHxcz
-        lAku2aIUlVA1q8HBrCm7bx8vVpSOblw7wCiT6q6JIlGuZCa6ndE1IbBRlHkkU1H5uCmVlxUi9jir
-        Em+37skqjyItVxoXGSTgGYRSjOqXArxUbcAQI8hevXJQhQmcgIXdmckVgs94IUqZc8RPJNlbdFZT
-        zoq+mkDUqBJxBtVNUxmr9oeP67IRIEnz9P5WULOyrn7IOgmmCxB3EKYLtRTFQDz0BEX+lLxOfGxY
-        1KaOiRGQECEUyLYhHVncIjTCKCpZJpasBh1M4JUIGScQ3nLgj+Q+/j6fPXzTaCt9JladXlvJRa5n
-        hdXRLOtBUmgf07aOEuySvGOVWC+/TmbT4PPG2Fibx7G+X3ttHfSVtwZIKi6el0zFEN8lpkYJsfFg
-        9eGZhXvVXrvq3M2VrCVL5a9eobJ3RjSXGFg/EV4fxD8SWz9U+69RUIM4N8bNKRTiTRSmfYDCOBMF
-        dZ13UVCA8Z+hsInr0uvzSBjWAQnzXBKm8S4Jm5DNl4+RMFoS1xcjQS9GYqwf9MG3+uOf0bGGyzxg
-        WZHCNOnRQI8iAGT4fJmUtn19DxVwsJFFRkaPbbqezY96Wef2NLYT1U9b6/uEKSXS+1xFMt71f9SN
-        CTHn61IeTxDDJMT0TK8LtQn705tweHw3jrYsbSCn08/A/kp0bj5yQxzT0FzzUhfEMf/xBRnr/YyF
-        9wMdXhAmV78BYdjQZV8IAAA=
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<MPD
+        mediaPresentationDuration=\"PT11.796S\" minBufferTime=\"PT1.500S\" profiles=\"urn:mpeg:dash:profile:isoff-on-demand:2011\"
+        type=\"static\" xmlns=\"urn:mpeg:dash:schema:mpd:2011\">\n    <Period duration=\"PT11.796S\">\n
+        \       <AdaptationSet segmentAlignment=\"true\" subsegmentAlignment=\"true\"
+        subsegmentStartsWithSAP=\"1\">\n            <Representation bandwidth=\"2416183\"
+        codecs=\"avc1.4d401f\" frameRate=\"30\" height=\"480\" id=\"VIDEO-1\" mimeType=\"video/mp4\"
+        startWithSAP=\"1\" width=\"264\">\n                <BaseURL>DASH_2_4_M</BaseURL>\n
+        \               <SegmentBase indexRange=\"903-1006\" indexRangeExact=\"true\">\n
+        \                   <Initialization range=\"0-902\"/>\n                </SegmentBase>\n
+        \           </Representation>\n            <Representation bandwidth=\"1208727\"
+        codecs=\"avc1.4d401e\" frameRate=\"30\" height=\"360\" id=\"VIDEO-2\" mimeType=\"video/mp4\"
+        startWithSAP=\"1\" width=\"198\">\n                <BaseURL>DASH_1_2_M</BaseURL>\n
+        \               <SegmentBase indexRange=\"903-1006\" indexRangeExact=\"true\">\n
+        \                   <Initialization range=\"0-902\"/>\n                </SegmentBase>\n
+        \           </Representation>\n            <Representation bandwidth=\"609915\"
+        codecs=\"avc1.4d401e\" frameRate=\"30\" height=\"240\" id=\"VIDEO-3\" mimeType=\"video/mp4\"
+        startWithSAP=\"1\" width=\"132\">\n                <BaseURL>DASH_600_K</BaseURL>\n
+        \               <SegmentBase indexRange=\"902-1005\" indexRangeExact=\"true\">\n
+        \                   <Initialization range=\"0-901\"/>\n                </SegmentBase>\n
+        \           </Representation>\n        </AdaptationSet>\n        <AdaptationSet>\n
+        \           <Representation audioSamplingRate=\"48000\" bandwidth=\"131111\"
+        codecs=\"mp4a.40.2\" id=\"AUDIO-1\" mimeType=\"audio/mp4\" startWithSAP=\"1\">\n
+        \               <AudioChannelConfiguration schemeIdUri=\"urn:mpeg:dash:23003:3:audio_channel_configuration:2011\"
+        value=\"2\"/>\n                <BaseURL>audio</BaseURL>\n                <SegmentBase
+        indexRange=\"832-935\" indexRangeExact=\"true\">\n                    <Initialization
+        range=\"0-831\"/>\n                </SegmentBase>\n            </Representation>\n
+        \       </AdaptationSet>\n    </Period>\n</MPD>\n"
     headers:
-      Accept-Ranges: [bytes]
-      Age: ['312134']
-      Connection: [keep-alive]
-      Content-Encoding: [gzip]
-      Content-Length: ['644']
-      Content-Type: [application/dash+xml]
-      Date: ['Sun, 05 Aug 2018 02:49:49 GMT']
-      ETag: ['"c8a71f31b45dbcdb30f8c03bc08e444b"']
-      Last-Modified: ['Sat, 05 Aug 2017 14:05:39 GMT']
-      Server: [snooserv]
-      Vary: ['Accept-Encoding,Origin']
-      Via: [1.1 varnish]
-      X-Cache: [HIT]
-      X-Cache-Hits: ['1']
-      X-Served-By: [cache-ord1730-ORD]
-      X-Timer: ['S1533437390.599096,VS0,VE1']
-    status: {code: 200, message: OK}
+      Accept-Ranges:
+      - bytes
+      Access-Control-Expose-Headers:
+      - x-cdn-server-region, x-cdn-client-region, x-cdn-name
+      Cache-Control:
+      - public, max-age=604800, s-maxage=86400, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2143'
+      Content-Type:
+      - application/dash+xml
+      Date:
+      - Sun, 16 Feb 2020 20:44:57 GMT
+      ETag:
+      - '"c8a71f31b45dbcdb30f8c03bc08e444b"'
+      Last-Modified:
+      - Sat, 05 Aug 2017 14:05:39 GMT
+      Server:
+      - snooserv
+      Vary:
+      - Origin
+      Via:
+      - 1.1 varnish
+      - 1.1 varnish
+      X-Cache:
+      - HIT, HIT
+      X-Cache-Hits:
+      - 1, 1
+      X-Served-By:
+      - cache-bwi5121-BWI, cache-bur17568-BUR
+      X-Timer:
+      - S1581885897.087368,VS0,VE0
+      x-cdn-client-region:
+      - NA
+      x-cdn-name:
+      - fastly
+      x-cdn-server-region:
+      - US-West
+    status:
+      code: 200
+      message: OK
 version: 1

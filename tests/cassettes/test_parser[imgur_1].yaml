@@ -2,53 +2,87 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Authorization: ['**********']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.11.0]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - '**********'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
     method: GET
     uri: https://api.imgur.com/3/gallery/yW0kbMi
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA0VSQXKDMAz8CqMzk0BKm8Afeu6h6TCOUUCtsRlbToZ2+vfKJDQ3S9audtf+gU6x
-        guYHqIMG5rfi6/RKkAMTG5TO65wZp5XJ0KBm7yzpkAV2HrNBhUxlWvFG5jsM2tPE5Cw0NhqTJ2Zk
-        GoWlrF7qotoV9UGI5ynx0qh6PG4/J+wFrazUjCLhrEzAHK7U8QDN7rDb5TAg9QNLVZb7HAJ9C8Hh
-        pdzXVQ4XwmuQq6cyh5Oy3R1Y1nWxr6oyTTjGVdJZXZynVN/32HC+/hdBHC76YSTTmZkso8fAZBeN
-        WrtouY3erHRrK2V361Bo1cMF2XZ0gdsLeWX+u5JbGwT3mGPVi4f3D2Hs2ltAxXJedgEsTL0yBv0M
-        DfuYMG4iva5dikWG4AzZL0ENzFNojtvjljY09tFvtBuP2/sTbz6nZEpaI4qDxYfEdnhktPbSC8RJ
-        9D0Ld+euNsWdw+QkHjlWAgla/kM61rcEzCmOd3O/chu1xhBW4YEVx8RRFL9/Sk8pNn8CAAA=
+        H4sIAAAAAAAAA1VSTW/bMAz9K4bORmJnXpr41stuvRQodlgGQ5EUm40sGSYVzyv630cpcbLe+Pn4
+        +MgPoSVJUX8I0KIW88/ifHwBkQsCsoYjL3NmvZI2M9YoGr0DhRmSH03WScxkpiStuF4bVCMMBN6J
+        2gVr84hsCHpGKavtvqg2xX7HwPMQcaGXrTms3wfTcrd07JNhCidp0eRiAk2dqDe7zSYXnYG2I/bK
+        8ikXCH8ZYLctn/ZVLi5gJhR1tefMUTp9a6w2u29luS154MWTWSid5MWPEP3bHIen6e4gb5j4ix6s
+        tjM4MqNBApc4KuWDoyaMdoFbQlG7awSwkY8twDW9R2ouMEp7j7JuDXLfo45kyzv8+s2IurkKVCQ7
+        zRI83GhI8hQJtJXWmnEWNY0htvsB1MIgOYkR11pwZwboiAasD+vDGlbQt2FcKd8f1rdrr96HtJ9u
+        lHcnaOM3oDyZH/ZK6/+JuRj4bo31vCXT7fgwr4Dne2lMtnzJmAzuCwrCH+pYD94qJWLJxLBvX8o4
+        iJ2f8FnjTZ7PXDDb3rDOSW1+p93jkkss/kkYuOc7r6395Njk0OD5iPE/uAUVf20099c72WPoHzMw
+        KGUQF02RJIWIURSf/wD3drYYJQMAAA==
     headers:
-      Accept-Ranges: [bytes]
-      Access-Control-Allow-Credentials: ['true']
-      Access-Control-Allow-Headers: ['Authorization, Content-Type, Accept, X-Mashape-Authorization,
-          IMGURPLATFORM, IMGURUIDJAFO, sessionCount, IMGURMWBETA, IMGURMWBETAOPTIN,
-          X-expSNKPK127']
-      Access-Control-Allow-Origin: ['*']
-      Access-Control-Expose-Headers: ['X-RateLimit-ClientLimit, X-RateLimit-ClientRemaining,
-          X-RateLimit-UserLimit, X-RateLimit-UserRemaining, X-RateLimit-UserReset']
-      Age: ['0']
-      Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
-          public']
-      Connection: [keep-alive]
-      Content-Encoding: [gzip]
-      Content-Length: ['395']
-      Content-Type: [application/json]
-      Date: ['Sun, 05 Aug 2018 02:49:44 GMT']
-      ETag: [W/"665db31200efb9f3807c5ebc3f4bdae94c888f5e"]
-      Server: [cat factory 1.0]
-      Vary: [Accept-Encoding]
-      X-Cache: ['MISS, MISS']
-      X-Cache-Hits: ['0, 0']
-      X-Frame-Options: [DENY]
-      X-RateLimit-ClientLimit: ['12500']
-      X-RateLimit-ClientRemaining: ['12386']
-      X-RateLimit-UserLimit: ['500']
-      X-RateLimit-UserRemaining: ['499']
-      X-RateLimit-UserReset: ['1533440984']
-      X-Served-By: ['cache-iad2123-IAD, cache-sea1041-SEA']
-      X-Timer: ['S1533437384.800580,VS0,VE323']
-      access-control-allow-methods: ['GET, PUT, POST, PATCH, DELETE, OPTIONS']
-    status: {code: 200, message: OK}
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Authorization, Content-Type, Accept, X-Mashape-Authorization, IMGURPLATFORM,
+        IMGURUIDJAFO, sessionCount, IMGURMWBETA, IMGURMWBETAOPTIN, X-expSNKPK127
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-ClientLimit, X-RateLimit-ClientRemaining, X-RateLimit-UserLimit,
+        X-RateLimit-UserRemaining, X-RateLimit-UserReset, Geo-City, Geo-Region, Geo-Metro-Code,
+        Geo-Country-Code
+      Age:
+      - '601'
+      Cache-Control:
+      - max-age=60, stale-while-revalidate=600, stale-if-error=86400, public
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '478'
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 16 Feb 2020 20:44:46 GMT
+      ETag:
+      - W/"a14f7f80f0594918aeb6e326e6dbcdea25bde86d"
+      Server:
+      - cat factory 1.0
+      Vary:
+      - Accept-Encoding
+      X-Cache:
+      - MISS, HIT
+      X-Cache-Hits:
+      - 0, 1
+      X-Frame-Options:
+      - DENY
+      X-RateLimit-ClientLimit:
+      - '12500'
+      X-RateLimit-ClientRemaining:
+      - '12460'
+      X-RateLimit-UserLimit:
+      - '500'
+      X-RateLimit-UserRemaining:
+      - '493'
+      X-RateLimit-UserReset:
+      - '1581887972'
+      X-Served-By:
+      - cache-bwi5140-BWI, cache-ams21049-AMS
+      X-Timer:
+      - S1581885886.287023,VS0,VE1
+      access-control-allow-methods:
+      - GET, PUT, POST, PATCH, DELETE, OPTIONS
+    status:
+      code: 200
+      message: OK
 version: 1
