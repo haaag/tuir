@@ -91,7 +91,7 @@ class Content(object):
 
             # The MoreComments item count should never be zero, discard it if
             # it is. Need to look into this further.
-            if isinstance(item, praw.objects.MoreComments) and item.count == 0:
+            if isinstance(item, praw.models.MoreComments) and item.count == 0:
                 continue
 
             if item.parent_id:
@@ -127,7 +127,7 @@ class Content(object):
         data = {}
         data['object'] = comment
 
-        if isinstance(comment, praw.objects.MoreComments):
+        if isinstance(comment, praw.models.MoreComments):
             data['type'] = 'MoreComments'
             data['level'] = comment.nested_level
             data['count'] = comment.count

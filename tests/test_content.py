@@ -276,7 +276,7 @@ def test_content_flatten_comments_3(reddit):
 def test_content_submission_initialize(reddit, terminal):
 
     url = 'https://www.reddit.com/r/Python/comments/2xmo63/'
-    submission = reddit.get_submission(url)
+    submission = reddit.submission(url=url)
     content = SubmissionContent(submission, terminal.loader, indent_size=3,
                                 max_indent_level=4, order='top')
     assert content.indent_size == 3
