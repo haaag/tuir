@@ -188,7 +188,7 @@ def reddit(vcr, request, config):
             # Make praw not check for updates
             os.environ['praw_check_for_updates'] = "False"
             reddit = praw.Reddit(client_id=config['oauth_client_id'],
-                                 client_secret=config['oauth_client_secret'],
+                                 client_secret=None,
                                  redirect_uri=config['oauth_redirect_uri'],
                                  user_agent='tuir test suite',
                                  decode_html_entities=False,
