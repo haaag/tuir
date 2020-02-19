@@ -332,7 +332,7 @@ def test_content_submission(reddit, terminal):
 def test_content_submission_load_more_comments(reddit, terminal):
 
     url = 'https://www.reddit.com/r/AskReddit/comments/2np694/'
-    submission = reddit.get_submission(url)
+    submission = reddit.submission(url=url)
     content = SubmissionContent(submission, terminal.loader)
     last_index = len(content._comment_data) - 1
 
