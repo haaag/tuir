@@ -288,11 +288,11 @@ def test_content_submission_initialize(reddit, terminal):
 def test_content_submission(reddit, terminal):
 
     url = 'https://www.reddit.com/r/Python/comments/2xmo63/'
-    submission = reddit.get_submission(url)
+    submission = reddit.submission(url=url)
     content = SubmissionContent(submission, terminal.loader)
 
     # Everything is loaded upon instantiation
-    assert content.range == (-1, 44)
+    assert content.range == (-1, 43)
     assert content.get(-1)['type'] == 'Submission'
     assert content.get(40)['type'] == 'Comment'
 
@@ -309,9 +309,9 @@ def test_content_submission(reddit, terminal):
     with pytest.raises(IndexError):
         content.get(50)
 
-    # Toggling the submission doesn't do anything
+    # Toggling the submission shouldn't do anything
     content.toggle(-1)
-    assert len(content._comment_data) == 45
+    assert len(content._comment_data) == 44
 
     # Toggling a comment hides its 3 children
     content.toggle(2)
@@ -320,13 +320,13 @@ def test_content_submission(reddit, terminal):
     assert data['count'] == 3
     assert data['hidden'] is True
     assert data['level'] >= content.get(3)['level']
-    assert content.range == (-1, 42)
+    assert content.range == (-1, 41)
 
     # Toggling again expands the children
     content.toggle(2)
     data = content.get(2)
     assert data['hidden'] is False
-    assert content.range == (-1, 44)
+    assert content.range == (-1, 43)
 
 
 def test_content_submission_load_more_comments(reddit, terminal):
