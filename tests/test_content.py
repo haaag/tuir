@@ -218,9 +218,12 @@ def test_content_flatten_comments_2(reddit):
 
     # Grab a large MoreComments instance to test
     url = 'https://www.reddit.com/r/CollegeBasketball/comments/31owr1'
-    submission = reddit.get_submission(url, comment_sort='top')
-    more_comment = submission.comments[-1]
-    assert isinstance(more_comment, praw.objects.MoreComments)
+    submission = reddit.submission(url=url)
+
+    submission.comment_sort = 'top'
+    more_comment = submission.comments.list()[-1]
+
+    assert isinstance(more_comment, praw.models.MoreComments)
 
     # Make sure that all comments are displayed one level below their parents
     comments = more_comment.comments()
