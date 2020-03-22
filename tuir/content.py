@@ -768,7 +768,7 @@ class SubredditContent(Content):
                     display_name = display_name.replace(
                         '/me/', '/{0}/'.format(redditor))
 
-            multireddit = reddit.get_multireddit(redditor, resource)
+            multireddit = reddit.multireddit(redditor, resource)
             submissions = getattr(multireddit, method_alias)(limit=None)
 
         elif resource_root == 'u' and resource == 'me':
@@ -789,13 +789,13 @@ class SubredditContent(Content):
                 raise InvalidSubreddit('Unavailable Resource')
             order = order or 'new'
             period = period or 'all'
-            redditor = reddit.get_redditor(resource)
+            redditor = reddit.redditor(resource)
             method = getattr(redditor, 'get_%s' % user_room)
             submissions = method(sort=order, time=period, limit=None)
 
         elif resource == 'front':
             if order in (None, 'hot'):
-                submissions = reddit.get_front_page(limit=None)
+                submissions = reddit.front(limit=None)
             elif period:
                 # For the front page, praw makes you send the period as `t`
                 # instead of calling reddit.get_hot_from_week()
@@ -806,7 +806,7 @@ class SubredditContent(Content):
                 submissions = getattr(reddit, method_alias)(limit=None)
 
         else:
-            subreddit = reddit.get_subreddit(resource)
+            subreddit = reddit.subreddit(resource)
             submissions = getattr(subreddit, method_alias)(limit=None)
 
             # For special subreddits like /r/random we want to replace the
