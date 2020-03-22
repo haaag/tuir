@@ -378,7 +378,7 @@ def test_content_submission_from_url(reddit, terminal):
 
 def test_content_subreddit_initialize(reddit, terminal, config):
 
-    submissions = reddit.get_subreddit('python').get_top(limit=None)
+    submissions = reddit.subreddit('python').top(limit=None)
     content = SubredditContent(config, 'python', submissions, terminal.loader, 'top')
     assert content.name == 'python'
     assert content.order == 'top'
