@@ -399,7 +399,7 @@ def test_content_subreddit_initialize_invalid(reddit, terminal, config):
 
 def test_content_subreddit(reddit, terminal, config):
 
-    submissions = reddit.get_front_page(limit=5)
+    submissions = reddit.front.hot(limit=5)
     content = SubredditContent(config, 'front', submissions, terminal.loader)
 
     # Submissions are loaded on demand, excluding for the first one
@@ -425,7 +425,7 @@ def test_content_subreddit_load_more(reddit, terminal, config):
 
     config['look_and_feel'] = 'default'
 
-    submissions = reddit.get_front_page(limit=None)
+    submissions = reddit.front.hot(limit=None)
     content = SubredditContent(config, 'front', submissions, terminal.loader)
 
     assert content.get(50)['type'] == 'Submission'
