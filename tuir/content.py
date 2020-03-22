@@ -453,6 +453,7 @@ class SubmissionContent(Content):
                  order=None, max_comment_cols=120):
 
         submission_data = self.strip_praw_submission(submission)
+        submission.comment_sort = order
         comments = self.flatten_comments(submission.comments)
 
         self.indent_size = indent_size
@@ -482,7 +483,7 @@ class SubmissionContent(Content):
         if url.startswith('/'):
             url = 'https://www.reddit.com' + url
 
-        submission = reddit.get_submission(url, comment_sort=order)
+        submission = reddit.submission(url=url)
         return cls(submission, loader, indent_size, max_indent_level, order,
                    max_comment_cols)
 
