@@ -168,9 +168,11 @@ class LoadScreen(object):
     EXCEPTION_MESSAGES = [
         (exceptions.TUIRError, '{0}'),
         (prawcore.exceptions.OAuthException, 'OAuth Error'),
+        # TODO: reddit.subreddit('invalid_sub') fails with this exception, but
+        # is this message always correct?
+        (prawcore.exceptions.Redirect, 'Invalid Subreddit'),
         # A few exceptions don't exist in PRAW 6
         #(praw.errors.InvalidCaptcha, 'Error, captcha required'),
-        #(praw.errors.InvalidSubreddit, '{0.args[0]}'),
         #(praw.errors.PRAWException, '{0.__class__.__name__}'),
         (requests.exceptions.Timeout, 'HTTP request timed out'),
         (requests.exceptions.RequestException, '{0.__class__.__name__}'),

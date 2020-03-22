@@ -387,12 +387,14 @@ def test_content_subreddit_initialize(reddit, terminal, config):
 
 def test_content_subreddit_initialize_invalid(reddit, terminal, config):
 
-    submissions = reddit.get_subreddit('invalidsubreddit7').get_top(limit=None)
+    submissions = reddit.subreddit('invalidsubreddit7').top(limit=None)
 
     with terminal.loader():
         SubredditContent(config, 'python', submissions, terminal.loader, 'top')
 
-    assert isinstance(terminal.loader.exception, praw.errors.InvalidSubreddit)
+    # PRAW doesn't have a proper InvalidSubreddit-like error here anymore,
+    # instead it redirects to subreddit search
+    assert isinstance(terminal.loader.exception, prawcore.exceptions.Redirect)
 
 
 def test_content_subreddit(reddit, terminal, config):

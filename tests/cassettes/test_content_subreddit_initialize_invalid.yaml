@@ -1,0 +1,125 @@
+interactions:
+- request:
+    body: device_id=DO_NOT_TRACK_THIS_DEVICE&grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - '**********'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - tuir test suite PRAW/6.5.1 prawcore/1.0.1
+    method: POST
+    uri: https://www.reddit.com/api/v1/access_token
+  response:
+    body:
+      string: '{"access_token": "-0xUk9j6b3Z--A8cmwOZulw__KFI", "token_type": "bearer",
+        "device_id": "DO_NOT_TRACK_THIS_DEVICE", "expires_in": 3600, "scope": "*"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '147'
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Sun, 22 Mar 2020 21:42:13 GMT
+      Server:
+      - snooserv
+      Set-Cookie:
+      - edgebucket=NZZBOWUnnhaxcgBHga; Domain=reddit.com; Max-Age=63071999; Path=/;  secure
+      Strict-Transport-Security:
+      - max-age=15552000; includeSubDomains; preload
+      Via:
+      - 1.1 varnish
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      X-Moose:
+      - majestic
+      X-Served-By:
+      - cache-lcy19276-LCY
+      X-Timer:
+      - S1584913334.502754,VS0,VE357
+      cache-control:
+      - max-age=0, must-revalidate
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-reddit-loid:
+      - 00000000006075ovjo.2.1584913333785.Z0FBQUFBQmVkOXUxUkJxeFh4UFdVaVNBbnpDeUVpbjJMVE5ZUXJTSlVJcF8wUGViTDN2TVhSdVpLUFEyTzIzQklwQUdYWXREYUNPdmktNnZkeEVQZlYyV0pwbmltbGlDRVZ5MHBpdXU2U29YMlZnM0lxSDhUczh0RVNnS0RzV19Wc3VzYlg0d0pyMWs
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - '**********'
+      Connection:
+      - keep-alive
+      Cookie:
+      - edgebucket=NZZBOWUnnhaxcgBHga
+      User-Agent:
+      - tuir test suite PRAW/6.5.1 prawcore/1.0.1
+    method: GET
+    uri: https://oauth.reddit.com/r/invalidsubreddit7/top?t=all&limit=1024&raw_json=1
+  response:
+    body:
+      string: "<html>\n <head>\n  <title>302 Found</title>\n </head>\n <body>\n  <h1>302
+        Found</h1>\n  The resource was found at <a href=\"https://oauth.reddit.com/subreddits/search?q=invalidsubreddit7\">https://oauth.reddit.com/subreddits/search?q=invalidsubreddit7</a>;\nyou
+        should be redirected automatically.\n\n\n </body>\n</html>"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '307'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Sun, 22 Mar 2020 21:42:14 GMT
+      Server:
+      - snooserv
+      Set-Cookie:
+      - csv=1; Max-Age=63072000; Domain=.reddit.com; Path=/; Secure; SameSite=None
+      Strict-Transport-Security:
+      - max-age=15552000; includeSubDomains; preload
+      Via:
+      - 1.1 varnish
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      X-Moose:
+      - majestic
+      X-Served-By:
+      - cache-fra19157-FRA
+      X-Timer:
+      - S1584913335.834133,VS0,VE103
+      cache-control:
+      - max-age=0, must-revalidate
+      location:
+      - https://oauth.reddit.com/subreddits/search?q=invalidsubreddit7
+    status:
+      code: 302
+      message: Found
+version: 1
