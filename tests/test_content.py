@@ -597,7 +597,7 @@ def test_content_subscription(reddit, terminal):
         SubscriptionContent.from_user(reddit, terminal.loader)
 
     assert isinstance(
-        terminal.loader.exception, praw.errors.LoginOrScopeRequired)
+        terminal.loader.exception, prawcore.exceptions.Redirect)
 
     with terminal.loader():
         content = SubscriptionContent.from_user(

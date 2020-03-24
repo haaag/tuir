@@ -286,13 +286,13 @@ class Content(object):
 
         data = {}
         data['object'] = subscription
-        if isinstance(subscription, praw.objects.Multireddit):
+        if isinstance(subscription, praw.models.Multireddit):
             data['type'] = 'Multireddit'
             data['name'] = subscription.path
             data['title'] = subscription.description_md
         else:
             data['type'] = 'Subscription'
-            data['name'] = "/r/" + subscription.display_name
+            data['name'] = "/r/" + subscription.subreddit.display_name
             data['title'] = subscription.title
 
         return data
@@ -919,14 +919,14 @@ class SubscriptionContent(Content):
     def from_user(cls, reddit, loader, content_type='subreddit'):
         if content_type == 'subreddit':
             name = 'My Subreddits'
-            items = reddit.get_my_subreddits(limit=None)
+            items = reddit.user.subreddits(limit=None)
         elif content_type == 'multireddit':
             name = 'My Multireddits'
             # Multireddits are returned as a list
             items = iter(reddit.get_my_multireddits())
         elif content_type == 'popular':
             name = 'Popular Subreddits'
-            items = reddit.get_popular_subreddits(limit=None)
+            items = reddit.front.best(limit=None)
         else:
             raise exceptions.SubscriptionError('Invalid type %s' % content_type)
 
