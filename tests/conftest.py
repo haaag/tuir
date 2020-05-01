@@ -29,12 +29,14 @@ except ImportError:
 # Turn on autospec by default for convenience
 patch = partial(mock.patch, autospec=True)
 
+# This knob is broken on Gitlab. Comment it out to enable quickly checking
+# differences in tests between python versions
 # Turn on logging, but disable vcr from spamming
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
-for name in ['vcr.matchers', 'vcr.stubs']:
-    logging.getLogger(name).disabled = True
+#logging.basicConfig(
+#    level=logging.DEBUG,
+#    format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
+#for name in ['vcr.matchers', 'vcr.stubs']:
+#    logging.getLogger(name).disabled = True
 
 
 def pytest_addoption(parser):
@@ -175,7 +177,7 @@ def stdscr():
 
 
 @pytest.yield_fixture()
-def reddit(vcr, request, config):
+def reddit(vcr, request, config, refresh_token):
     cassette_name = '%s.yaml' % request.node.name
     # Clear the cassette before running the test
     if request.config.option.record_mode == 'once':
@@ -188,11 +190,12 @@ def reddit(vcr, request, config):
             # Make praw not check for updates
             os.environ['praw_check_for_updates'] = "False"
             reddit = praw.Reddit(client_id=config['oauth_client_id'],
-                                 client_secret=None,
+                                 client_secret=config['oauth_client_secret'],
                                  redirect_uri=config['oauth_redirect_uri'],
                                  user_agent='tuir test suite',
                                  decode_html_entities=False,
-                                 disable_update_check=True)
+                                 disable_update_check=True,
+                                 refresh_token=refresh_token)
             # TODO - is the following necessary with PRAW version >3.6?
             # praw uses a global cache for requests, so we need to clear it
             # before each unit test. Otherwise we may fail to generate new
