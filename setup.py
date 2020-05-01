@@ -57,12 +57,9 @@ setuptools.setup(
     keywords='reddit terminal praw curses',
     packages=[
         'tuir',
-        'tuir.packages',
-        'tuir.packages.praw'
     ],
     package_data={
         'tuir': ['templates/*', 'themes/*'],
-        'tuir.packages.praw': ['praw.ini']
     },
     data_files=[("share/man/man1", ["tuir.1"])],
     install_requires=install_requires,
