@@ -178,9 +178,9 @@ class Content(object):
             data['level'] = None
             data['title'] = '[Comment] {0}'.format(comment.body)
             data['comments'] = None
-            data['url_full'] = comment._fast_permalink
-            data['url'] = comment._fast_permalink
-            data['permalink'] = comment._fast_permalink
+            data['url_full'] = comment.link_url
+            data['url'] = comment.link_url
+            data['permalink'] = comment.link_url
             data['nsfw'] = comment.over_18
             data['subreddit'] = six.text_type(comment.subreddit)
             data['url_type'] = 'selfpost'
@@ -578,6 +578,12 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
+    USER_ROOMS = ['new', 'submissions', 'comments']
+    PRIVATE_USER_ROOMS = ['upvoted', 'downvoted', 'hidden', 'saved']
+    ORDERS = ['hot', 'top', 'rising', 'new', 'controversial', 'gilded', None]
+    SEARCH_ORDERS = ['relevance', 'top', 'comments', 'new', None]
+    PERIODS = ['all', 'day', 'hour', 'month', 'week', 'year', None]
+
     def __init__(self, config, name, submissions, loader, order=None,
                  query=None, filter_nsfw=False):
 
@@ -607,28 +613,10 @@ class SubredditContent(Content):
                 full_name += '/' + self.order
             raise exceptions.NoSubmissionsError(full_name)
 
-    @classmethod
-    def from_name(cls, reddit, config, name, loader, order=None, query=None):
-        """
-        Params:
-            reddit (praw.Reddit): Instance of the reddit api.
-            name (text): The name of the desired subreddit, user, multireddit,
-                etc. In most cases this translates directly from the URL that
-                reddit itself uses. This is what users will type in the command
-                prompt when they navigate to a new location.
-            loader (terminal.loader): Handler for the load screen that will be
-                displayed when making http requests.
-            order (text): If specified, the order that posts will be sorted in.
-                For `top` and `controversial`, you can specify the time frame
-                by including a dash, e.g. "top-year". If an order is not
-                specified, it will be extracted from the name.
-            query (text): Content to search for on the given subreddit or
-                user's page.
-        """
-        # TODO: This desperately needs to be refactored
-
+    @staticmethod
+    def _get_resource(resource):
         # Strip leading, trailing, and redundant backslashes
-        parts = [seg for seg in name.strip(' /').split('/') if seg]
+        parts = [seg for seg in resource.strip(' /').split('/') if seg]
 
         # Check for the resource type, assume /r/ as the default
         if len(parts) >= 3 and parts[2] == 'm':
@@ -657,13 +645,18 @@ class SubredditContent(Content):
             #     After:  resource_root = "u/civilization_phaze_3/m"
             resource_root = 'u' + resource_root[4:]
 
-        # The parts left should be in one of the following forms:
+        # 'resource_root' should be 'r', 'u', 'domain', 'user', or a
+        # multireddit root in the format 'u/user/m'
+        #
+        # 'parts' should be in one of
+        # the following forms:
         #    [resource]
         #    [resource, order]
         #    [resource, user_room, order]
+        return resource_root, parts
 
-        user_rooms = ['overview', 'submitted', 'comments']
-        private_user_rooms = ['upvoted', 'downvoted', 'hidden', 'saved']
+    @classmethod
+    def _user_from_name(cls, parts):
         user_room = None
 
         if len(parts) == 1:
@@ -672,70 +665,182 @@ class SubredditContent(Content):
             #    resource = "python"
             #    resource_order = None
             resource, resource_order = parts[0], None
-        elif resource_root == 'u' and len(parts) in [2, 3] \
-                and parts[1] in user_rooms + private_user_rooms:
-            # E.g. /u/spez/submitted/top ->
-            #    parts = ["spez", "submitted", "top"]
-            #    resource = "spez"
-            #    user_room = "submitted"
-            #    resource_order = "top"
-            resource, user_room = parts[:2]
-            resource_order = parts[2] if len(parts) == 3 else None
+        elif len(parts) in [2, 3] and parts[1] in cls.USER_ROOMS + cls.PRIVATE_USER_ROOMS:
+           # E.g. /u/spez/submitted/top ->
+           #    parts = ["spez", "submitted", "top"]
+           #    resource = "spez"
+           #    user_room = "submitted"
+           #    resource_order = "top"
+           resource, user_room = parts[:2]
+           resource_order = parts[2] if len(parts) == 3 else None
+        elif len(parts) == 2:
+            resource, resource_order = parts
+        elif len(parts) >= 3 and parts[2] == 'm':
+            # For user multireddits
+            resource_root, parts = '/'.join(parts[:3]), parts[3:]
+
+        return resource, user_room, resource_order
+
+    @staticmethod
+    def _subreddit_from_name(parts):
+        if len(parts) == 1:
+            # E.g. /r/python
+            #    parts = ["python"]
+            #    resource = "python"
+            #    resource_order = None
+            resource, resource_order = parts[0], None
         elif len(parts) == 2:
             # E.g. /r/python/top
             #    parts = ["python", "top"]
             #    resource = "python
             #    resource_order = "top"
             resource, resource_order = parts
+
+        return resource, resource_order
+
+    @staticmethod
+    def _subreddit_order_period(subreddit, order, period):
+        if order and period:
+            if order == 'hot':
+                return subreddit.hot(period, limit=None)
+            elif order == 'top':
+                return subreddit.top(period, limit=None)
+            elif order == 'rising':
+                return subreddit.rising(period, limit=None)
+            elif order == 'new':
+                return subreddit.new(period, limit=None)
+            elif order == 'controversial':
+                return subreddit.controversial(period, limit=None)
+            elif order == 'gilded':
+                return subreddit.gilded(period, limit=None)
+        else:
+            return subreddit.hot()
+
+    @classmethod
+    def _user_submissions(cls, reddit, user_room, order, period, resource):
+        redditor = reddit.redditor(resource)
+
+        # If the user_room is valid, use it
+        if user_room:
+            if user_room not in cls.USER_ROOMS:
+                # Tried to access a private room like "u/me/hidden" for a
+                # different redditor
+                raise excpetions.InvalidSubredditError('Unavailable Resource')
+
+            room = getattr(redditor, user_room)
+
+            order_method = getattr(room, order)
+
+            if period:
+                submissions = order_method(period)
+            else:
+                submissions = order_method()
+        else:
+            submissions = redditor.new()
+
+        return submissions
+
+    @classmethod
+    def _multi_submissions(cls, reddit, order, period, resource_root, resource):
+        # TODO - set "global" default in from_name, this used to be handled by
+        # the method_alias functionality
+        order = order or 'top'
+
+        redditor = resource_root.split('/')[1]
+
+        if redditor == 'me':
+            if not reddit.is_oauth_session():
+                raise exceptions.AccountError('Not logged in')
+            else:
+                redditor = reddit.user.name
+                display_name = display_name.replace(
+                    '/me/', '/{0}/'.format(redditor))
+
+        multireddit = reddit.multireddit(redditor, resource)
+
+        if period:
+            submissions = getattr(multireddit, order)(period, limit=None)
+        else:
+            submissions = getattr(multireddit, order)(limit=None)
+
+        return submissions
+
+    @classmethod
+    def _get_resource_parts(cls, reddit, name):
+        user_room = None
+        resource_period = None
+
+        resource_root, parts = cls._get_resource(name)
+
+        # Handle each type of resource individually
+        if resource_root in ['u', 'user'] or resource_root == 'domain' or \
+                resource_root.endswith('/m'):
+            resource, user_room, resource_order = cls._user_from_name(parts)
+        elif resource_root == 'domain': # Domain search
+            pass
+        elif resource_root == 'r': # Subreddit
+            resource, resource_order = cls._subreddit_from_name(parts)
         else:
             raise exceptions.InvalidSubredditError('`{}` is an invalid format'.format(name))
 
-        if not resource:
-            # Praw does not correctly handle empty strings
-            # https://github.com/praw-dev/praw/issues/615
-            raise exceptions.InvalidSubredditError('Subreddit cannot be empty')
+        # Split the order from the period E.g. controversial-all, top-hour
+        if resource_order and '-' in resource_order:
+            resource_order, resource_period = resource_order.split('-', 1)
+
+        return resource_root, resource, resource_order, resource_period, user_room
+
+    @classmethod
+    def from_name(cls, reddit, config, name, loader, order=None, query=None):
+        """
+        Params:
+            reddit (praw.Reddit): Instance of the reddit api.
+            name (text): The name of the desired subreddit, user, multireddit,
+                etc. In most cases this translates directly from the URL that
+                reddit itself uses. This is what users will type in the command
+                prompt when they navigate to a new location.
+            loader (terminal.loader): Handler for the load screen that will be
+                displayed when making http requests.
+            order (text): If specified, the order that posts will be sorted in.
+                For `top` and `controversial`, you can specify the time frame
+                by including a dash, e.g. "top-year". If an order is not
+                specified, it will be extracted from the name.
+            query (text): Content to search for on the given subreddit or
+                user's page.
+        """
+        # TODO: This can probably be refactored further
+
+        resource_root, resource, resource_order, resource_period, user_room = \
+                cls._get_resource_parts(reddit, name)
 
         # If the order was explicitly passed in, it will take priority over
         # the order that was extracted from the name
         order = order or resource_order
 
-        display_order = order
+        if resource_period:
+            display_order = order + '-' + resource_period
+        else:
+            display_order = order
+
         display_name = '/'.join(['', resource_root, resource])
-        if user_room and resource_root == 'u':
+
+        # Show the user room in display name only if display name is non-default
+        if resource_root == 'u' and user_room and user_room != 'new':
             display_name += '/' + user_room
 
-        # Split the order from the period E.g. controversial-all, top-hour
-        if order and '-' in order:
-            order, period = order.split('-', 1)
-        else:
-            period = None
-
         if query:
-            # The allowed orders for sorting search results are different
-            orders = ['relevance', 'top', 'comments', 'new', None]
+            # The allowed periods for sorting search results are different
             period_allowed = ['top', 'comments']
         else:
-            orders = ['hot', 'top', 'rising', 'new', 'controversial', 'gilded', None]
             period_allowed = ['top', 'controversial']
 
-        if order not in orders:
-            raise InvalidSubreddit('Invalid order `%s`' % order)
-        if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
-            raise InvalidSubreddit('Invalid period `%s`' % period)
-        if period and order not in period_allowed:
-            raise InvalidSubreddit(
-                '`%s` order does not allow sorting by period' % order)
-
-        # On some objects, praw doesn't allow you to pass arguments for the
-        # order and period. Instead you need to call special helper functions
-        # such as Multireddit.get_controversial_from_year(). Build the method
-        # name here for convenience.
-        if period:
-            method_alias = 'get_{0}_from_{1}'.format(order, period)
-        elif order:
-            method_alias = 'get_{0}'.format(order)
-        else:
-            method_alias = 'get_hot'
+        if (query and order not in cls.SEARCH_ORDERS) or \
+                (order not in cls.ORDERS):
+            raise exceptions.InvalidSubredditError('Invalid order `{}`'.format(order))
+        if resource_period not in cls.PERIODS:
+            raise exceptions.InvalidSubredditError('Invalid period `{}`'.format(resource_period))
+        if resource_period and order not in period_allowed:
+            raise exceptions.InvalidSubredditError(
+                '`{}` order does not allow sorting by period'.format(order))
 
         # Here's where we start to build the submission generators
         if query:
@@ -750,70 +855,53 @@ class SubredditContent(Content):
 
             reddit.config.API_PATHS['search'] = search
             submissions = reddit.search(query, subreddit=subreddit,
-                                        sort=order, period=period)
+                                        sort=order, period=resource_period)
 
-        elif resource_root == 'domain':
-            order = order or 'hot'
-            submissions = reddit.get_domain_listing(
-                resource, sort=order, period=period, limit=None)
-
+        # TODO: it doesn't look possible to retain the old functionality of
+        # this with new PRAW. Need to examine further
+        #elif resource_root == 'domain':
+        #    order = order or 'hot'
+        #    submissions = reddit.domain(
+        #        resource, sort=order, period=period, limit=None)
         elif resource_root.endswith('/m'):
-            redditor = resource_root.split('/')[1]
-
-            if redditor == 'me':
-                if not reddit.is_oauth_session():
-                    raise exceptions.AccountError('Not logged in')
-                else:
-                    redditor = reddit.user.name
-                    display_name = display_name.replace(
-                        '/me/', '/{0}/'.format(redditor))
-
-            multireddit = reddit.multireddit(redditor, resource)
-            submissions = getattr(multireddit, method_alias)(limit=None)
-
+            submissions = cls._multi_submissions(reddit, order, resource_period,
+                    resource_root, resource)
         elif resource_root == 'u' and resource == 'me':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
             else:
                 user_room = user_room or 'overview'
                 order = order or 'new'
-                period = period or 'all'
+                resource_period = resource_period or 'all'
                 method = getattr(reddit.user, 'get_%s' % user_room)
-                submissions = method(sort=order, time=period, limit=None)
+                submissions = method(sort=order, time=resource_period, limit=None)
 
         elif resource_root == 'u':
-            user_room = user_room or 'overview'
-            if user_room not in user_rooms:
-                # Tried to access a private room like "u/me/hidden" for a
-                # different redditor
-                raise InvalidSubreddit('Unavailable Resource')
             order = order or 'new'
-            period = period or 'all'
-            redditor = reddit.redditor(resource)
-            method = getattr(redditor, 'get_%s' % user_room)
-            submissions = method(sort=order, time=period, limit=None)
-
-        elif resource == 'front':
-            if order in (None, 'hot'):
-                submissions = reddit.front(limit=None)
-            elif period:
+            submissions = cls._user_submissions(reddit, user_room, order, \
+                    resource_period, resource)
+        #elif resource == 'front':
+        #    if order in (None, 'hot'):
+        #        submissions = reddit.front.hot(limit=None)
+        #    elif period:
                 # For the front page, praw makes you send the period as `t`
                 # instead of calling reddit.get_hot_from_week()
-                method_alias = 'get_{0}'.format(order)
-                method = getattr(reddit, method_alias)
-                submissions = method(limit=None, params={'t': period})
-            else:
-                submissions = getattr(reddit, method_alias)(limit=None)
+        #        method_alias = 'get_{0}'.format(order)
+        #        method = getattr(reddit, method_alias)
+        #        submissions = method(limit=None, params={'t': period})
+        #    else:
+        #        submissions = getattr(reddit.front, order)(limit=None)
 
         else:
             subreddit = reddit.subreddit(resource)
-            submissions = getattr(subreddit, method_alias)(limit=None)
+            #submissions = getattr(subreddit, method_alias)(limit=None)
+            submissions = cls._subreddit_order_period(subreddit, order, resource_period)
 
             # For special subreddits like /r/random we want to replace the
             # display name with the one returned by the request.
             display_name = '/r/{0}'.format(subreddit.display_name)
 
-        filter_nsfw = (reddit.user and reddit.user.over_18 is False)
+        filter_nsfw = (reddit.user and reddit.user.preferences()['over_18'] is False)
 
         # We made it!
         return cls(config, display_name, submissions, loader, order=display_order,

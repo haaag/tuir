@@ -40,24 +40,22 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('top-all', ('/r/pics/top-all', '/r/pics', 'top-all')),
     ('pics_linux', ('/r/pics+linux', '/r/pics+linux', None)),
     ('multi-new', ('/r/pics+linux/new', '/r/pics+linux', 'new')),
-    ('front_0', ('front', '/r/front', None)),
+    ('front-0', ('front', '/r/front', None)),
     ('front-1', ('/r/front', '/r/front', None)),
     ('front-new', ('/r/front/new', '/r/front', 'new')),
     ('front-top-week', ('/r/front/top-week', '/r/front', 'top-week')),
     ('user-0', ('/user/spez', '/u/spez', None)),
     ('user-1', ('/u/spez', '/u/spez', None)),
-    ('user-new', ('/u/spez/new', '/u/spez', 'new')),
     ('user-top-all', ('/u/spez/top-all', '/u/spez', 'top-all')),
-    ('user-overview', ('/u/spez/overview', '/u/spez/overview', None)),
-    ('user-submitted', ('/u/spez/submitted', '/u/spez/submitted', None)),
+    ('user-submitted', ('/u/spez/submissions', '/u/spez/submissions', None)),
     ('user-comments', ('/u/spez/comments', '/u/spez/comments', None)),
-    ('multi-0', ('/user/multi-mod/m/art', '/u/multi-mod/m/art', None)),
-    ('multi-1', ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None)),
-    ('multi-top', ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top')),
-    ('multi-top-all', ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all')),
-    ('domain', ('/domain/python.org', '/domain/python.org', None)),
-    ('domain-new', ('/domain/python.org/new', '/domain/python.org', 'new')),
-    ('domain-top-all', ('/domain/python.org/top-all', '/domain/python.org', 'top-all')),
+    ('multi-0', ('/user/reddit/m/redditpets', '/u/reddit/m/redditpets', None)),
+    ('multi-1', ('/u/reddit/m/redditpets', '/u/reddit/m/redditpets', None)),
+    ('multi-top', ('/u/reddit/m/redditpets/top', '/u/reddit/m/redditpets', 'top')),
+    ('multi-top-all', ('/u/reddit/m/redditpets/top-all', '/u/reddit/m/redditpets', 'top-all'))#,
+#    ('domain', ('/domain/python.org', '/domain/python.org', None)),
+#    ('domain-new', ('/domain/python.org/new', '/domain/python.org', 'new')),
+#    ('domain-top-all', ('/domain/python.org/top-all', '/domain/python.org', 'top-all')),
 ])
 
 # Will raise an error if not logged in
@@ -443,6 +441,7 @@ def test_content_subreddit_load_more(reddit, terminal, config):
         assert data['title'].startswith(six.text_type(i + 1))
 
 
+# TODO: SubredditContent.from_name() should really have more error case testing
 args, ids = SUBREDDIT_PROMPTS.values(), list(SUBREDDIT_PROMPTS)
 @pytest.mark.parametrize('prompt,name,order', args, ids=ids)
 def test_content_subreddit_from_name(prompt, name, order, reddit, terminal, config):
