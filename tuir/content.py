@@ -749,10 +749,10 @@ class SubredditContent(Content):
         redditor = resource_root.split('/')[1]
 
         if redditor == 'me':
-            if not reddit.is_oauth_session():
+            if reddit.read_only:
                 raise exceptions.AccountError('Not logged in')
             else:
-                redditor = reddit.user.name
+                redditor = reddit.user.me().name
                 display_name = display_name.replace(
                     '/me/', '/{0}/'.format(redditor))
 
@@ -867,14 +867,14 @@ class SubredditContent(Content):
             submissions = cls._multi_submissions(reddit, order, resource_period,
                     resource_root, resource)
         elif resource_root == 'u' and resource == 'me':
-            if not reddit.is_oauth_session():
+            # reddit.read_only is an accurate way of checking whether or not
+            # we're logged in, right?
+            if reddit.read_only:
                 raise exceptions.AccountError('Not logged in')
             else:
-                user_room = user_room or 'overview'
                 order = order or 'new'
-                resource_period = resource_period or 'all'
-                method = getattr(reddit.user, 'get_%s' % user_room)
-                submissions = method(sort=order, time=resource_period, limit=None)
+                submissions = cls._user_submissions(reddit, user_room, order,
+                        resource_period, reddit.user.me().name)
 
         elif resource_root == 'u':
             order = order or 'new'
