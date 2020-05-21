@@ -3,14 +3,15 @@ from __future__ import unicode_literals
 
 import requests
 
-from tuir.oauth import OAuthHelper, OAuthHandler
-from tuir.exceptions import InvalidRefreshToken
-
-
 try:
     from unittest import mock
 except ImportError:
     import mock
+
+from prawcore.exceptions import OAuthException
+
+from tuir.oauth import OAuthHelper, OAuthHandler
+from tuir.exceptions import InvalidRefreshToken
 
 
 def test_oauth_handler_not_found(oauth_server):
@@ -126,10 +127,11 @@ def test_oauth_authorize(oauth, reddit, stdscr, refresh_token):
 
     # Because we use `from .helpers import open_browser` we have to patch the
     # function in the destination oauth module and not the helpers module
-    with mock.patch('uuid.UUID.hex', new_callable=mock.PropertyMock) as uuid, \
+    with mock.patch('uuid.UUID.hex', new_callable=mock.PropertyMock) as uuid,  \
             mock.patch('tuir.terminal.Terminal.open_browser') as open_browser, \
             mock.patch('tuir.oauth.OAuthHTTPServer') as http_server,           \
-            mock.patch.object(oauth.reddit, 'user'),                          \
+            mock.patch.object(oauth.reddit.auth, 'authorize'),                 \
+            mock.patch.object(oauth.reddit, 'user'),                           \
             mock.patch('time.sleep'):
 
         # Valid authorization
@@ -143,13 +145,12 @@ def test_oauth_authorize(oauth, reddit, stdscr, refresh_token):
 
         oauth.authorize()
         assert open_browser.called
-        oauth.reddit.get_access_information.assert_called_with(
-            reddit, params['code'])
+        oauth.reddit.auth.authorize.assert_called_with(params['code'])
         assert oauth.config.refresh_token is not None
         assert oauth.config.save_refresh_token.called
 
         stdscr.reset_mock()
-        oauth.reddit.get_access_information.reset_mock()
+        oauth.reddit.auth.authorize.reset_mock()
         oauth.config.save_refresh_token.reset_mock()
         oauth.server = None
 
@@ -175,21 +176,20 @@ def test_oauth_authorize(oauth, reddit, stdscr, refresh_token):
 
         oauth.authorize()
         assert open_browser.called
-        oauth.reddit.get_access_information.assert_called_with(
-            reddit, params['code'])
+        oauth.reddit.auth.authorize.assert_called_with(params['code'])
         assert oauth.config.refresh_token is not None
         assert oauth.config.save_refresh_token.called
 
         stdscr.reset_mock()
-        oauth.reddit.get_access_information.reset_mock()
+        oauth.reddit.auth.authorize.reset_mock()
         oauth.config.refresh_token = None
         oauth.config.save_refresh_token.reset_mock()
         oauth.server = None
 
         # Exceptions when logging in are handled correctly
-        with mock.patch.object(oauth.reddit, 'get_access_information'):
-            exception = OAuthException('', '')
-            oauth.reddit.get_access_information.side_effect = exception
+        with mock.patch.object(oauth.reddit.auth, 'authorize'):
+            exception = OAuthException('', '', '')
+            oauth.reddit.auth.authorize.side_effect = exception
             oauth.authorize()
         assert isinstance(oauth.term.loader.exception, OAuthException)
         assert not oauth.config.save_refresh_token.called

@@ -170,8 +170,7 @@ class OAuthHelper(object):
             return
 
         state = uuid.uuid4().hex
-        authorize_url = self.reddit.get_authorize_url(
-            state, scope=self.config['oauth_scope'], refreshable=True)
+        authorize_url = self.reddit.auth.url(self.config['oauth_scope'], state)
 
         if self.server is None:
             address = ('', self.config['oauth_redirect_port'])
@@ -228,7 +227,7 @@ class OAuthHelper(object):
             return
 
         with self.term.loader('Logging in'):
-            info = self.reddit.get_access_information(self.params['code'])
+            info = self.reddit.auth.authorize(self.params['code'])
         if self.term.loader.exception:
             return
 
